@@ -6,6 +6,7 @@ type Holiday = {
   name: string;
   global: boolean;
   counties: string[] | null;
+  custom?: boolean;
 };
 type Plan = {
   start: Date;
@@ -180,6 +181,9 @@ export default function Home() {
   const [region, setRegion] = useState("ON");
   const [year, setYear] = useState(yearNow);
   const [vacationBudget, setVacationBudget] = useState(10);
+  const [customDate, setCustomDate] = useState(`${yearNow}-01-02`);
+  const [customName, setCustomName] = useState("");
+  const [customDays, setCustomDays] = useState<Holiday[]>([]);
   const [holidays, setHolidays] = useState<Holiday[]>([]);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
@@ -198,6 +202,23 @@ export default function Home() {
     (total, plan) => total + plan.days.length,
     0,
   );
+  function addCustomDay() {
+    if (!customDate) return;
+    const day: Holiday = {
+      date: customDate,
+      localName: customName.trim() || "Extra day off",
+      name: customName.trim() || "Extra day off",
+      global: false,
+      counties: null,
+      custom: true,
+    };
+    setCustomDays((current) =>
+      [...current.filter((item) => item.date !== day.date), day].sort((a, b) =>
+        a.date.localeCompare(b.date),
+      ),
+    );
+    setCustomName("");
+  }
   async function build() {
     setLoading(true);
     setError("");
@@ -208,10 +229,14 @@ export default function Home() {
       );
       if (!res.ok) throw Error();
       const data: Holiday[] = await res.json();
-      setHolidays(
-        data.filter(
+      const regional = data.filter(
           (h) => !h.counties || h.counties.includes(`${cc}-${region}`),
-        ),
+        );
+      setHolidays(
+        [
+          ...regional,
+          ...customDays.filter((day) => day.date.startsWith(`${year}-`)),
+        ].sort((a, b) => a.date.localeCompare(b.date)),
       );
       setSearched(true);
       setTimeout(
@@ -298,6 +323,56 @@ export default function Home() {
             {loading ? "Planning…" : "Build my plan"} <span>→</span>
           </button>
         </div>
+        <div className="custom-days">
+          <div className="custom-copy">
+            <span>OPTIONAL</span>
+            <b>Add employer or personal days off</b>
+            <small>Easter Monday, shutdown days, flex days, and more.</small>
+          </div>
+          <label>
+            NAME
+            <input
+              aria-label="Extra day off name"
+              placeholder="e.g. Easter Monday"
+              value={customName}
+              onChange={(e) => setCustomName(e.target.value)}
+            />
+          </label>
+          <label>
+            DATE
+            <input
+              aria-label="Extra day off date"
+              type="date"
+              min={`${year}-01-01`}
+              max={`${year}-12-31`}
+              value={customDate}
+              onChange={(e) => setCustomDate(e.target.value)}
+            />
+          </label>
+          <button className="add-day" type="button" onClick={addCustomDay}>
+            Add day +
+          </button>
+        </div>
+        {customDays.length > 0 && (
+          <div className="custom-chips" aria-label="Added extra days off">
+            {customDays.map((day) => (
+              <span key={day.date}>
+                <b>{day.localName}</b> {fmt(new Date(`${day.date}T12:00:00`))}
+                <button
+                  type="button"
+                  aria-label={`Remove ${day.localName}`}
+                  onClick={() =>
+                    setCustomDays((current) =>
+                      current.filter((item) => item.date !== day.date),
+                    )
+                  }
+                >
+                  ×
+                </button>
+              </span>
+            ))}
+          </div>
+        )}
         {error && <p className="error">{error}</p>}
       </section>
       {!searched ? (
@@ -416,7 +491,11 @@ export default function Home() {
                   <span>
                     <b>{h.localName}</b>
                     <small>
-                      {h.global ? "Federal / nationwide" : "Regional holiday"}
+                      {h.custom
+                        ? "Employer / personal day"
+                        : h.global
+                          ? "Federal / nationwide"
+                          : "Regional holiday"}
                     </small>
                   </span>
                   <em>
