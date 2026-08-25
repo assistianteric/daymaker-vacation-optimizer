@@ -191,6 +191,9 @@ export default function Home() {
   const [searched, setSearched] = useState(false);
   const [error, setError] = useState("");
   const regionName = REGIONS[country].find((r) => r[0] === region)?.[1];
+  const effectiveCustomDate = customDate.startsWith(`${year}-`)
+    ? customDate
+    : `${year}-01-02`;
   const allPlans = useMemo(() => plansFor(holidays, year), [holidays, year]);
   const plans = useMemo(
     () => optimizeYear(allPlans, vacationBudget),
@@ -205,9 +208,9 @@ export default function Home() {
     0,
   );
   function addCustomDay() {
-    if (!customDate) return;
+    if (!effectiveCustomDate) return;
     const day: Holiday = {
-      date: customDate,
+      date: effectiveCustomDate,
       localName: customName.trim() || "Extra day off",
       name: customName.trim() || "Extra day off",
       global: false,
@@ -354,7 +357,7 @@ export default function Home() {
               type="date"
               min={`${year}-01-01`}
               max={`${year}-12-31`}
-              value={customDate}
+              value={effectiveCustomDate}
               onChange={(e) => setCustomDate(e.target.value)}
             />
           </label>
