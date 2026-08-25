@@ -115,6 +115,8 @@ function plansFor(holidays: Holiday[], year: number) {
             vacation.push(d);
         }
         if (
+          start.getFullYear() === year &&
+          end.getFullYear() === year &&
           days.length >= 3 &&
           vacation.length > 0 &&
           vacation.length <= 15 &&
@@ -298,7 +300,14 @@ export default function Home() {
           </label>
           <label>
             YEAR
-            <select value={year} onChange={(e) => setYear(+e.target.value)}>
+            <select
+              value={year}
+              onChange={(e) => {
+                const nextYear = +e.target.value;
+                setYear(nextYear);
+                setCustomDate(`${nextYear}-01-02`);
+              }}
+            >
               {[yearNow, yearNow + 1, yearNow + 2, yearNow + 3].map((y) => (
                 <option key={y}>{y}</option>
               ))}
@@ -464,7 +473,14 @@ export default function Home() {
                 <div className="book">
                   <b>Book these days</b>
                   {p.vacation.map((d) => (
-                    <span key={key(d)}>{fmt(d, true)}</span>
+                    <span key={key(d)}>
+                      {d.toLocaleDateString("en-US", {
+                        weekday: "short",
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      })}
+                    </span>
                   ))}
                 </div>
               </article>
