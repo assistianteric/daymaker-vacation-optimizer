@@ -115,6 +115,58 @@ button:disabled {
   cursor: wait;
   opacity: 0.75;
 }
+.custom-days {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 0.8fr auto;
+  align-items: stretch;
+  max-width: 1180px;
+  margin-top: 14px;
+  border: 1px solid rgba(23, 38, 29, 0.18);
+  background: rgba(255, 255, 255, 0.38);
+}
+.custom-copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+  padding: 13px 18px;
+}
+.custom-copy span {
+  color: var(--orange);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+}
+.custom-copy small {
+  color: rgba(23, 38, 29, 0.65);
+}
+.custom-days .add-day {
+  background: var(--ink);
+  padding: 0 22px;
+}
+.custom-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-width: 1180px;
+  margin-top: 10px;
+}
+.custom-chips > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 8px 7px 12px;
+  background: var(--lime);
+  font-size: 11px;
+}
+.custom-chips button {
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border-radius: 50%;
+  background: var(--ink);
+  font-size: 14px;
+}
 .preview {
   background: var(--lime);
   padding: 70px 5vw;
@@ -195,12 +247,18 @@ h3 {
   .planner {
     grid-template-columns: 1fr;
   }
+  .custom-days {
+    grid-template-columns: 1fr;
+  }
   label {
     border-right: 0;
     border-bottom: 1px solid #ddd;
   }
   button {
     padding: 20px;
+  }
+  .custom-chips button {
+    padding: 0;
   }
   .preview {
     grid-template-columns: 1fr;
