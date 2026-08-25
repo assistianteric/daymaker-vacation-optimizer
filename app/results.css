@@ -1,2 +1,153 @@
-.error{font:700 13px Arial!important;color:#b73320!important;margin-top:18px!important}.results{background:#dce85b;padding:70px 5vw}.results>header{display:flex;align-items:end;justify-content:space-between;border-bottom:1px solid #17261d;padding-bottom:34px;margin-bottom:30px}.results>header h2{margin-bottom:0}.results>header p{text-align:right;line-height:1.7}.results>header p strong{font:22px Georgia;color:#f36a2b}.resultgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.resultgrid article{min-height:340px}.resultgrid .featured{background:#17261d;color:white}.book{display:flex;flex-wrap:wrap;gap:7px;margin-top:24px;padding-top:18px;border-top:1px solid #aaa}.book b{width:100%;font-size:10px;letter-spacing:.12em;text-transform:uppercase}.book span{font-size:11px;padding:7px 9px;background:#f1eadc;color:#17261d}.holidayList{margin-top:90px;display:grid;grid-template-columns:.7fr 2fr;gap:70px}.holidayList ul{list-style:none;margin:0;padding:0;border-top:1px solid #17261d}.holidayList li{display:grid;grid-template-columns:70px 1fr auto;gap:20px;align-items:center;padding:18px 0;border-bottom:1px solid #75802e}.holidayList time{font:17px Georgia}.holidayList li span{display:flex;flex-direction:column;gap:3px}.holidayList small{font-size:10px;text-transform:uppercase;letter-spacing:.09em}.holidayList em{font-family:Georgia}.disclaimer{font-size:11px;margin:50px 0 0 36%;max-width:600px}footer{background:#17261d;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:34px 5vw}footer b span{color:#f36a2b}footer p{font-family:Georgia}footer a{color:#fff;text-decoration:none;font-size:12px}@media(max-width:900px){.resultgrid{grid-template-columns:1fr 1fr}.holidayList{grid-template-columns:1fr;gap:20px}}@media(max-width:600px){.results>header{display:block}.results>header p{text-align:left}.resultgrid{grid-template-columns:1fr}.holidayList li{grid-template-columns:58px 1fr}.holidayList em{display:none}.disclaimer{margin-left:0}footer p{display:none}}
+.error {
+  font: 700 13px Arial !important;
+  color: #b73320 !important;
+  margin-top: 18px !important;
+}
+.results {
+  background: #dce85b;
+  padding: 70px 5vw;
+}
+.results > header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  border-bottom: 1px solid #17261d;
+  padding-bottom: 34px;
+  margin-bottom: 30px;
+}
+.results > header h2 {
+  margin-bottom: 0;
+}
+.results > header p {
+  text-align: right;
+  line-height: 1.7;
+}
+.results > header p strong {
+  font: 22px Georgia;
+  color: #f36a2b;
+}
+.resultgrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+.resultgrid article {
+  min-height: 340px;
+}
+.resultgrid .featured {
+  background: #17261d;
+  color: white;
+}
+.book {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid #aaa;
+}
+.book b {
+  width: 100%;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.book span {
+  font-size: 11px;
+  padding: 7px 9px;
+  background: #f1eadc;
+  color: #17261d;
+}
+.holidayList {
+  margin-top: 90px;
+  display: grid;
+  grid-template-columns: 0.7fr 2fr;
+  gap: 70px;
+}
+.holidayList ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid #17261d;
+}
+.holidayList li {
+  display: grid;
+  grid-template-columns: 70px 1fr auto;
+  gap: 20px;
+  align-items: center;
+  padding: 18px 0;
+  border-bottom: 1px solid #75802e;
+}
+.holidayList time {
+  font: 17px Georgia;
+}
+.holidayList li span {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.holidayList small {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+}
+.holidayList em {
+  font-family: Georgia;
+}
+.disclaimer {
+  font-size: 11px;
+  margin: 50px 0 0 36%;
+  max-width: 600px;
+}
+footer {
+  background: #17261d;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 34px 5vw;
+}
+footer b span {
+  color: #f36a2b;
+}
+footer p {
+  font-family: Georgia;
+}
+footer a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 12px;
+}
+@media (max-width: 900px) {
+  .resultgrid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .holidayList {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+@media (max-width: 600px) {
+  .results > header {
+    display: block;
+  }
+  .results > header p {
+    text-align: left;
+  }
+  .resultgrid {
+    grid-template-columns: 1fr;
+  }
+  .holidayList li {
+    grid-template-columns: 58px 1fr;
+  }
+  .holidayList em {
+    display: none;
+  }
+  .disclaimer {
+    margin-left: 0;
+  }
+  footer p {
+    display: none;
+  }
+}
 
