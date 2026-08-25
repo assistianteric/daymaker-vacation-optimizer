@@ -1,6 +1,14 @@
 import type { NextConfig } from 'next';
 
-const nextConfig: NextConfig = {};
+const isGitHubPages = process.env.GITHUB_PAGES === 'true';
+
+const nextConfig: NextConfig = {
+  output: isGitHubPages ? 'export' : undefined,
+  basePath: isGitHubPages ? '/daymaker-vacation-optimizer' : '',
+  assetPrefix: isGitHubPages ? '/daymaker-vacation-optimizer/' : undefined,
+  trailingSlash: isGitHubPages,
+  images: { unoptimized: true },
+};
 
 export default nextConfig;
 
