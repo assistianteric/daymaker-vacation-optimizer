@@ -101,6 +101,8 @@ const fmt = (d: Date, full = false) =>
 function plansFor(holidays: Holiday[], year: number) {
   const off = new Set(holidays.map((h) => h.date));
   const all: Plan[] = [];
+  const horizonStart = new Date(year, 0, 1);
+  const horizonEnd = new Date(year + 1, 0, 10, 23, 59, 59);
   for (const h of holidays) {
     const center = new Date(h.date + "T12:00:00");
     for (let before = 0; before <= 10; before++)
@@ -115,8 +117,8 @@ function plansFor(holidays: Holiday[], year: number) {
             vacation.push(d);
         }
         if (
-          start.getFullYear() === year &&
-          end.getFullYear() === year &&
+          start >= horizonStart &&
+          end <= horizonEnd &&
           days.length >= 3 &&
           vacation.length > 0 &&
           vacation.length <= 15 &&
@@ -182,7 +184,7 @@ export default function Home() {
   const [country, setCountry] = useState<keyof typeof REGIONS>("Canada");
   const [region, setRegion] = useState("ON");
   const [year, setYear] = useState(yearNow);
-  const [vacationBudget, setVacationBudget] = useState(10);
+  const [vacationBudgetInput, setVacationBudgetInput] = useState("10");
   const [customDate, setCustomDate] = useState(`${yearNow}-01-02`);
   const [customName, setCustomName] = useState("");
   const [customDays, setCustomDays] = useState<Holiday[]>([]);
@@ -191,6 +193,10 @@ export default function Home() {
   const [searched, setSearched] = useState(false);
   const [error, setError] = useState("");
   const regionName = REGIONS[country].find((r) => r[0] === region)?.[1];
+  const vacationBudget = Math.max(
+    1,
+    Math.min(30, Number(vacationBudgetInput) || 1),
+  );
   const effectiveCustomDate = customDate.startsWith(`${year}-`)
     ? customDate
     : `${year}-01-02`;
@@ -229,18 +235,29 @@ export default function Home() {
     setError("");
     try {
       const cc = country === "Canada" ? "CA" : "US";
-      const res = await fetch(
-        `https://date.nager.at/api/v3/PublicHolidays/${year}/${cc}`,
+      const [currentResponse, nextResponse] = await Promise.all([
+        fetch(`https://date.nager.at/api/v3/PublicHolidays/${year}/${cc}`),
+        fetch(`https://date.nager.at/api/v3/PublicHolidays/${year + 1}/${cc}`),
+      ]);
+      if (!currentResponse.ok || !nextResponse.ok) throw Error();
+      const currentData: Holiday[] = await currentResponse.json();
+      const nextData: Holiday[] = await nextResponse.json();
+      const appliesToRegion = (holiday: Holiday) =>
+        !holiday.counties || holiday.counties.includes(`${cc}-${region}`);
+      const regional = currentData.filter(appliesToRegion);
+      const januaryBridge = nextData.filter(
+        (holiday) =>
+          holiday.date <= `${year + 1}-01-10` && appliesToRegion(holiday),
       );
-      if (!res.ok) throw Error();
-      const data: Holiday[] = await res.json();
-      const regional = data.filter(
-          (h) => !h.counties || h.counties.includes(`${cc}-${region}`),
-        );
       setHolidays(
         [
           ...regional,
-          ...customDays.filter((day) => day.date.startsWith(`${year}-`)),
+          ...januaryBridge,
+          ...customDays.filter(
+            (day) =>
+              day.date >= `${year}-01-01` &&
+              day.date <= `${year + 1}-01-10`,
+          ),
         ].sort((a, b) => a.date.localeCompare(b.date)),
       );
       setSearched(true);
@@ -323,12 +340,12 @@ export default function Home() {
               type="number"
               min="1"
               max="30"
-              value={vacationBudget}
+              inputMode="numeric"
+              value={vacationBudgetInput}
               onChange={(e) =>
-                setVacationBudget(
-                  Math.max(1, Math.min(30, Number(e.target.value) || 1)),
-                )
+                setVacationBudgetInput(e.target.value.replace(/\D/g, ""))
               }
+              onBlur={() => setVacationBudgetInput(String(vacationBudget))}
             />
           </label>
           <button onClick={build} disabled={loading}>
@@ -437,7 +454,7 @@ export default function Home() {
               <span className="step">01</span>
               <h2>
                 {regionName},<br />
-                {year} optimized.
+                {year} + New Year optimized.
               </h2>
             </div>
             <p>
@@ -504,7 +521,7 @@ export default function Home() {
                   <time>
                     {new Date(h.date + "T12:00:00").toLocaleDateString(
                       "en-US",
-                      { month: "short", day: "2-digit" },
+                      { month: "short", day: "2-digit", year: "numeric" },
                     )}
                   </time>
                   <span>
