@@ -161,18 +161,47 @@ function optimizeYear(candidates: Plan[], budget: number) {
   const dp: Plan[][][] = Array.from({ length: sorted.length + 1 }, () =>
     Array.from({ length: budget + 1 }, () => []),
   );
-  const value = (plans: Plan[]) =>
-    plans.reduce((total, plan) => total + plan.days.length, 0);
+  const isBetter = (candidate: Plan[], current: Plan[]) => {
+    const candidateLengths = candidate
+      .map((plan) => plan.days.length)
+      .sort((a, b) => b - a);
+    const currentLengths = current
+      .map((plan) => plan.days.length)
+      .sort((a, b) => b - a);
+    const comparisons = Math.max(
+      candidateLengths.length,
+      currentLengths.length,
+    );
+    for (let index = 0; index < comparisons; index++) {
+      const candidateLength = candidateLengths[index] || 0;
+      const currentLength = currentLengths[index] || 0;
+      if (candidateLength !== currentLength)
+        return candidateLength > currentLength;
+    }
+    const candidateTotal = candidateLengths.reduce(
+      (sum, days) => sum + days,
+      0,
+    );
+    const currentTotal = currentLengths.reduce((sum, days) => sum + days, 0);
+    if (candidateTotal !== currentTotal) return candidateTotal > currentTotal;
+    const candidateCost = candidate.reduce(
+      (sum, plan) => sum + plan.vacation.length,
+      0,
+    );
+    const currentCost = current.reduce(
+      (sum, plan) => sum + plan.vacation.length,
+      0,
+    );
+    return candidateCost < currentCost;
+  };
   for (let i = 1; i <= sorted.length; i++) {
     const plan = sorted[i - 1];
     const cost = plan.vacation.length;
     for (let days = 0; days <= budget; days++) {
       const skip = dp[i - 1][days];
       const take =
-        cost <= days
-          ? [...dp[previous[i - 1] + 1][days - cost], plan]
-          : [];
-      dp[i][days] = value(take) > value(skip) ? take : skip;
+        cost <= days ? [...dp[previous[i - 1] + 1][days - cost], plan] : [];
+      dp[i][days] = isBetter(take, skip) ? take : skip;
     }
   }
   return dp[sorted.length][budget].sort(
@@ -255,8 +284,7 @@ export default function Home() {
           ...januaryBridge,
           ...customDays.filter(
             (day) =>
-              day.date >= `${year}-01-01` &&
-              day.date <= `${year + 1}-01-10`,
+              day.date >= `${year}-01-01` && day.date <= `${year + 1}-01-10`,
           ),
         ].sort((a, b) => a.date.localeCompare(b.date)),
       );
@@ -290,8 +318,8 @@ export default function Home() {
           into longer escapes.
         </h1>
         <p>
-          Find the smartest ways to bridge public holidays and weekends—built
-          around where you live.
+          Build the longest uninterrupted vacations by bridging public holidays
+          and weekends—built around where you live.
         </p>
         <div className="planner">
           <label>
@@ -414,8 +442,8 @@ export default function Home() {
               optimized.
             </h2>
             <p>
-              We pair every public holiday with weekends and the fewest possible
-              vacation days.
+              We prioritize the longest continuous breaks your vacation-day
+              allowance can create.
             </p>
           </div>
           <article>
